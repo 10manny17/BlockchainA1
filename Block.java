@@ -2,6 +2,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 public class Block {
   public String hash;
@@ -21,7 +22,20 @@ public class Block {
    * @param nonce     Nonce
    */
   public Block(String hash, String prevHash, String data, long timestamp, long nonce) {
+
+    // this.hash = hash;
+    this.prevHash = prevHash;
+    this.data = data;
+    this.timestamp = new Date().getTime();
+    this.nonce = nonce;
     // Write your code here
+
+    this.hash = calculateHash();
+
+  }
+
+  public Block getBlock() {
+    return new Block(this.hash, this.prevHash, this.data, this.timestamp, this.nonce);
   }
 
   /**
@@ -32,8 +46,7 @@ public class Block {
    */
   public static Block genesis() {
     // Write your code here
-
-    return null;
+    return new Block("0", "0", "genesis block", 0, 0);
   }
 
   /**
@@ -45,10 +58,19 @@ public class Block {
    *                   of the hash
    * @return A mined block
    */
-  public static Block mineBlock(Block lastBlock, String data, int difficulty) {
-    // Write your code here
+  public Block mineBlock(Block lastBlock, String data, int difficulty) {
+    String hashTarget = new String(new char[difficulty]).replace('\0', '0');
+    Block minedBlock = new Block("0", lastBlock.getHash(), data, 0, 0);
+    while (minedBlock.hash.substring(0, difficulty).equals(hashTarget)) {
+      minedBlock.nonce++;
+      minedBlock.hash = calculateHash();
+    }
 
-    return null;
+    return minedBlock;
+  }
+
+  public String getHash() {
+    return this.hash;
   }
 
   /**
@@ -59,7 +81,9 @@ public class Block {
   public String calculateHash() {
     // Write your code here
 
-    return null;
+    String calculateHashResult = calculateHash(this.prevHash, this.data, this.timestamp, this.nonce);
+
+    return calculateHashResult;
   }
 
   /*
